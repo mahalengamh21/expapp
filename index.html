@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Tracker</title>
+    <title>Financial Tracker - ExpApp</title>
     <style>
         /* General Styles */
         body {
@@ -19,6 +19,15 @@
             width: 90%;
             margin: 40px auto;
             text-align: center;
+        }
+
+        /* Title Style */
+        .app-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #f1f1f6;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         h1 {
@@ -38,6 +47,12 @@
 
         .input-container div {
             width: 45%;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
         }
 
         input, button {
@@ -63,7 +78,7 @@
             background-color: #0051a8;
         }
 
-        /* Dashboard Button - Correct position below the input fields */
+        /* Dashboard Button */
         .dashboard-btn {
             margin-top: 20px;
             background-color: transparent;
@@ -159,20 +174,29 @@
 <body>
 
     <div class="container">
+        <!-- App Title -->
+        <div class="app-title">ExpApp</div>
+
         <!-- Income and Expense Input Fields -->
         <div class="input-container">
             <div>
                 <h3>Income</h3>
+                <label for="income-desc">Description</label>
                 <input type="text" id="income-desc" placeholder="Income Description" list="income-suggestions">
+                <label for="income-amount">Amount</label>
                 <input type="number" id="income-amount" placeholder="Amount">
+                <label for="income-date">Date</label>
                 <input type="date" id="income-date">
                 <button onclick="addIncome()">Add Income</button>
             </div>
 
             <div>
                 <h3>Expense</h3>
+                <label for="expense-desc">Description</label>
                 <input type="text" id="expense-desc" placeholder="Expense Description" list="expense-suggestions">
+                <label for="expense-amount">Amount</label>
                 <input type="number" id="expense-amount" placeholder="Amount">
+                <label for="expense-date">Date</label>
                 <input type="date" id="expense-date">
                 <button onclick="addExpense()">Add Expense</button>
             </div>
@@ -295,60 +319,38 @@
 
         // Add Income
         function addIncome() {
-            const incomeDesc = document.getElementById('income-desc').value;
-            const incomeAmount = document.getElementById('income-amount').value;
-            const incomeDate = document.getElementById('income-date').value;
+            const desc = document.getElementById('income-desc').value;
+            const amount = parseFloat(document.getElementById('income-amount').value);
+            const date = document.getElementById('income-date').value;
 
-            if (incomeDesc && incomeAmount && incomeDate) {
-                const income = {
-                    desc: incomeDesc,
-                    amount: incomeAmount,
-                    date: incomeDate,
-                    category: categorizeIncome(incomeDesc),
-                };
-                incomes.push(income);
+            if (desc && !isNaN(amount) && date) {
+                const category = categorizeIncome(desc);
+                const newIncome = { desc, amount, category, date };
+                incomes.push(newIncome);
                 localStorage.setItem('incomes', JSON.stringify(incomes));
                 renderIncomes();
-                resetIncomeFields();
-            } else {
-                alert('Please fill all fields.');
+                document.getElementById('income-desc').value = '';
+                document.getElementById('income-amount').value = '';
+                document.getElementById('income-date').value = '';
             }
         }
 
         // Add Expense
         function addExpense() {
-            const expenseDesc = document.getElementById('expense-desc').value;
-            const expenseAmount = document.getElementById('expense-amount').value;
-            const expenseDate = document.getElementById('expense-date').value;
+            const desc = document.getElementById('expense-desc').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+            const date = document.getElementById('expense-date').value;
 
-            if (expenseDesc && expenseAmount && expenseDate) {
-                const expense = {
-                    desc: expenseDesc,
-                    amount: expenseAmount,
-                    date: expenseDate,
-                    category: categorizeExpense(expenseDesc),
-                };
-                expenses.push(expense);
+            if (desc && !isNaN(amount) && date) {
+                const category = categorizeExpense(desc);
+                const newExpense = { desc, amount, category, date };
+                expenses.push(newExpense);
                 localStorage.setItem('expenses', JSON.stringify(expenses));
                 renderExpenses();
-                resetExpenseFields();
-            } else {
-                alert('Please fill all fields.');
+                document.getElementById('expense-desc').value = '';
+                document.getElementById('expense-amount').value = '';
+                document.getElementById('expense-date').value = '';
             }
-        }
-
-        // Reset Income Fields
-        function resetIncomeFields() {
-            document.getElementById('income-desc').value = '';
-            document.getElementById('income-amount').value = '';
-            document.getElementById('income-date').value = '';
-        }
-
-        // Reset Expense Fields
-        function resetExpenseFields() {
-            document.getElementById('expense-desc').value = '';
-            document.getElementById('expense-amount').value = '';
-            document.getElementById('expense-date').value = '';
         }
 
         // Delete Income
@@ -368,12 +370,19 @@
         // Toggle Show/Hide Records
         function toggleRecords() {
             const recordsContainer = document.getElementById('records-container');
-            recordsContainer.style.display = recordsContainer.style.display === 'none' ? 'block' : 'none';
+            if (recordsContainer.style.display === 'none' || recordsContainer.style.display === '') {
+                recordsContainer.style.display = 'block';
+                renderIncomes();
+                renderExpenses();
+            } else {
+                recordsContainer.style.display = 'none';
+            }
         }
 
         // Initial Render
         renderIncomes();
         renderExpenses();
     </script>
+
 </body>
 </html>
