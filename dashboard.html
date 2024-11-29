@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 900px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      color: #fff;
+    }
+    .charts-button {
+      background-color: #ff6f61;
+      color: #fff;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+    }
+    .charts-button:hover {
+      background-color: #d04e43;
+    }
+    canvas {
+      max-width: 100%;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard</h1>
+    <h2>Financial Overview</h2>
+    <canvas id="income-expense-chart"></canvas>
+    <button class="charts-button" onclick="window.location.href='index.html'">Back to Home</button>
+  </div>
+
+  <script>
+    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    const incomes = JSON.parse(localStorage.getItem('incomes')) || [];
+
+    const expenseAmounts = expenses.map(exp => exp.amount);
+    const incomeAmounts = incomes.map(inc => inc.amount);
+
+    const ctx = document.getElementById('income-expense-chart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Income', 'Expense'],
+        datasets: [{
+          label: 'Amounts',
+          data: [incomeAmounts.reduce((a, b) => a + b, 0), expenseAmounts.reduce((a, b) => a + b, 0)],
+          backgroundColor: ['#28a745', '#dc3545'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            beginAtZero: true
+          },
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
